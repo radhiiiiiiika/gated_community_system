@@ -1,10 +1,11 @@
 const { Sequelize, DataTypes } = require("sequelize");
 const path = require("path");
 
-// Initialize Sequelize with SQLite
+// SQLite keeps this project easy to run locally without a separate database server.
 const sequelize = new Sequelize({
   dialect: "sqlite",
   storage: path.resolve(__dirname, "gated_community.db"),
+  logging: false,
 });
 
 // Define the Visits model
@@ -18,10 +19,5 @@ const Visit = sequelize.define("Visit", {
 }, {
   timestamps: false, // Disable createdAt/updatedAt
 });
-
-// Test the connection
-sequelize.authenticate()
-  .then(() => console.log("✅ Database connected"))
-  .catch(err => console.error("❌ Database connection error:", err));
 
 module.exports = { sequelize, Visit };

@@ -1,98 +1,81 @@
-# Gated Community Guest Log System
-This project is a simple visitor management system built for gated communities. It allows security guards or residents to keep track of who is entering and leaving the premises, along with basic details like purpose of visit and house number.
+# Gated Guest Log System
 
-The system is designed to be straightforward and practical, focusing on day-to-day usability rather than unnecessary complexity.
+This is a full-stack visitor management project made for a gated community. It helps a guard or front-desk user register visitors, see who is currently inside, mark a visitor as checked out, and keep a simple record of previous visits.
 
-## Features
-* Register new visitors with basic details such as name, phone number, house number, and purpose
-* Track check-in and check-out times for each visitor
-* Filter visitor logs based on date to view past records
-* Separate view for active visitors and those who have already checked out
-* Responsive interface that works on both desktop and mobile
-* Simple notifications to indicate successful actions or errors
+I kept the database as SQLite because this project is meant to be easy to run locally. There is no separate MySQL server setup needed.
 
-## Tech Stack
-### Frontend
-* React 18 for building the user interface
-* Vite as the development and build tool
-* Axios for handling API requests
-* Styling done using inline CSS for simplicity
-### Backend
-* Node.js as the runtime
-* Express for handling API routes
-* Sequelize for database operations
-* SQLite as the database (can be replaced with PostgreSQL if needed)
+## What the project does
 
-## Project Structure
-The project is split into two main parts: frontend and backend.
-### Frontend (gated-guestlog-client):
-* src/api.js – handles API calls
-* src/App.jsx – main app component
-* src/pages/Home.jsx – dashboard view
-* index.css – global styling
-### Backend (gated-guestlog-server):
-* src/index.js – server entry point
-* src/db.js – database configuration
-* src/routes/visits.js – API routes for visitor operations
-* src/seed.js – script to add sample data
+- Add a visitor with name, phone number, house number, and visit purpose
+- Show active visitors separately from checked-out visitors
+- Save check-in time automatically
+- Check out a visitor and save the check-out time
+- Delete a visitor record when needed
+- Filter visitor records by date
+- Show success and error messages in the UI
+- Validate visitor data on both the frontend and backend
 
-## API Endpoints
-* GET /api/visits Fetch all visitor records
-* POST /api/visits Add a new visitor
-* PUT /api/visits/:id Update a visitor record (used for check-out)
-* DELETE /api/visits/:id Delete a visitor record
+## Tech used
 
-## Installation
-### Prerequisites
-* Node.js (version 14 or higher)
-* npm or yarn
+**Frontend:** React, Vite, JavaScript
 
-### Backend Setup
-* Navigate to the backend folder: cd gated-guestlog-server
-* Install dependencies: npm install
-* Start the server: npm run dev
-* The backend will run on:  http://localhost:5000
+**Backend:** Node.js, Express.js
 
-### Frontend Setup
-* Navigate to the frontend folder: cd gated-guestlog-client
-* Install dependencies: npm install
-* Start the frontend: npm run dev
-* The app will be available at:  http://localhost:5173
+**Database:** SQLite with Sequelize
 
-### Database Seeding
-To populate the database with sample data: cd gated-guestlog-server npm run seed
+## Project structure
 
-## Usage
-Register a visitor by entering their name (required) along with optional details like phone number and house number. Select the purpose of visit and check them in.
-Active visitors will appear in a separate section showing their details and check-in time.
+```text
+gated-guestlog/
+├── client/                 # React frontend
+│   ├── src/
+│   │   ├── pages/Home.jsx  # Main visitor management screen
+│   │   ├── api.js          # API calls
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   └── .env.example
+├── server/                 # Express backend
+│   ├── src/
+│   │   ├── db.js           # SQLite and Visit model setup
+│   │   ├── index.js        # Server startup
+│   │   └── routes/visits.js
+│   └── .env.example
+└── README.md
+```
 
-To check out a visitor, simply click the check-out option. Their record will move to the checked-out section.
+## How to run it
 
-Visitors can also be deleted if needed.
+### 1. Start the backend
 
-You can filter records by date using the date picker. There are also quick options to view today's records or clear the filter.
+```bash
+cd server
+npm install
+cp .env.example .env
+npm run dev
+```
 
-## Database Schema
-The system uses a single table to store visit details.
-### Visits Table:
-* id – unique identifier
-* visitor_name – name of the visitor (required)
-* visitor_phone – contact number
-* house_number – house or unit being visited
-* purpose – reason for visit (Guest, Delivery, Helper)
-* check_in – timestamp when the visitor entered
-* check_out – timestamp when the visitor left (empty if still inside)
+The API starts at `http://localhost:5000`. The SQLite database file and `Visits` table are created automatically when the server starts.
 
-## Environment Variables
-You can optionally create a .env file in the backend:
-PORT=5000
+### 2. Start the frontend
 
-## Future Improvements
-Some features that can be added later:
-* User authentication with different roles (Admin, Guard, Resident)
-* Visitor photo capture
-* QR-based check-in and check-out
-* Notifications to residents via SMS or email
-* Exporting visitor logs
-* Support for multiple communities
-* Visitor pre-approval system
+Open another terminal:
+
+```bash
+cd client
+npm install
+cp .env.example .env
+npm run dev
+```
+
+Then open the local Vite URL shown in the terminal, usually `http://localhost:5173`.
+
+## API routes
+
+| Method | Route | Use |
+| --- | --- | --- |
+| GET | `/api/visits` | Get all visitor records |
+| POST | `/api/visits` | Add a visitor |
+| PUT | `/api/visits/:id` | Mark a visitor as checked out |
+| DELETE | `/api/visits/:id` | Delete a visitor record |
+
+For a new visitor, the required fields are `visitor_name` and `purpose`. Phone number is optional, but if entered it must have 7 to 15 digits. The purpose can be `Guest`, `Delivery`, or `Helper`.

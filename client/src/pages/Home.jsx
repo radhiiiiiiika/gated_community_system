@@ -41,7 +41,7 @@ export default function GatedGuestLog() {
     try {
       await addVisit(newVisit);
       setNewVisit({ visitor_name: "", visitor_phone: "", house_number: "", purpose: "Guest" });
-      loadVisits();
+      await loadVisits();
       
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 3000);
@@ -58,7 +58,7 @@ export default function GatedGuestLog() {
     
     try {
       await updateVisit(id, { check_out: new Date().toISOString() });
-      loadVisits();
+      await loadVisits();
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 3000);
     } catch (err) {
@@ -74,7 +74,7 @@ export default function GatedGuestLog() {
     
     try {
       await deleteVisit(id);
-      loadVisits();
+      await loadVisits();
     } catch (err) {
       console.error(err);
       setErrorMessage("Failed to delete visit");
@@ -96,18 +96,18 @@ export default function GatedGuestLog() {
     });
   }
 
-  function isSameDate(date1String, date2String) {
-    if (!date1String || !date2String) return false;
-    const d1 = new Date(date1String);
-    const d2 = new Date(date2String);
-    return d1.getFullYear() === d2.getFullYear() &&
-           d1.getMonth() === d2.getMonth() &&
-           d1.getDate() === d2.getDate();
+  function getDateKey(dateString) {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
   function filterVisitorsByDate(visitors) {
     if (!selectedDate) return visitors;
-    return visitors.filter(v => isSameDate(v.check_in, selectedDate));
+    return visitors.filter(v => getDateKey(v.check_in) === selectedDate);
   }
 
   function getTodayDate() {
